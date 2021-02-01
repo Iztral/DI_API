@@ -45,6 +45,7 @@ namespace BusinessLogicLayer
 
         public bool Add(TrackEntity newTrack)
         {
+            newTrack.ID = 0;
             var trackDTO = _mapper.Map<Track>(newTrack);
             var opSuccess = _trackRepository.Add(trackDTO).Result;
             if(!opSuccess)
