@@ -14,24 +14,35 @@ namespace XUnitTest_ServiceLayer
     public class TrackServiceTests
     {
         private readonly TrackService _trackService;
-        private readonly Mock<ITrackRepository> _trackMockRepo;
-        private readonly Mock<ILogger<TrackEntity>> _logger;
+        private readonly Mock<ITrackRepository> _trackMockRepo = new Mock<ITrackRepository>();
+        private readonly Mock<ILogger<TrackEntity>> _logger = new Mock<ILogger<TrackEntity>>();
 
 
         public TrackServiceTests()
         {
-            _trackMockRepo = new Mock<ITrackRepository>();
-            _logger = new Mock<ILogger<TrackEntity>>();
             var myProfile = new TrackProfile();
             var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
             var mapper = new Mapper(configuration);
-
 
             _trackService = new TrackService(_trackMockRepo.Object, mapper, _logger.Object);
         }
 
         [Fact]
-        public void GetById_ReturnsCustomer_WhenTrackExists()
+        public void GetById_ReturnsNull_WhenTrackDoesNotExist()
+        {
+            // Arrange
+            int trackID = 1;
+            _trackMockRepo.Setup(x => x.GetByID(trackID)).Returns(() => null);
+
+            // Act
+            var track = _trackService.GetByID(trackID);
+
+            // Assert
+            Assert.Null(track);
+        }
+
+        [Fact]
+        public void GetById_ReturnsTrack_WhenTrackExists()
         {
             // Arrange
             var trackID = 1;
@@ -51,20 +62,6 @@ namespace XUnitTest_ServiceLayer
             // Assert
             Assert.Equal(trackID, track.ID);
             Assert.Equal(trackName, track.Name);
-        }
-
-        [Fact]
-        public void GetById_ReturnsNull_WhenTrackDoesNotExist()
-        {
-            // Arrange
-            int trackID = 1;
-            _trackMockRepo.Setup(x => x.GetByID(trackID)).Returns(() => null);
-
-            // Act
-            var track = _trackService.GetByID(trackID);
-
-            // Assert
-            Assert.Null(track);
         }
 
         [Fact]

@@ -23,15 +23,15 @@ namespace BusinessLogicLayer
 
         public TrackEntity GetByID(int ID)
         {
-            var track = _trackRepository.GetByID(ID).Result;
+            var track = _trackRepository.GetByID(ID);
             if(track == null)
             {
                 _logger.LogInformation("Unable to find track with ID: {Id}", ID);
                 return null;
             }
 
-            _logger.LogInformation("Found track with ID: {Id}", track.ID);
-            return _mapper.Map<TrackEntity>(track);
+            _logger.LogInformation("Found track with ID: {Id}", track.Result.ID);
+            return _mapper.Map<TrackEntity>(track.Result);
         }
 
         public List<TrackEntity> GetAll()
