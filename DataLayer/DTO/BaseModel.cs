@@ -5,8 +5,6 @@ namespace DataLayer.DTO
 {
     public class BaseModel
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
     }
 }

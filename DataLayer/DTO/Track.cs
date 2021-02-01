@@ -6,7 +6,6 @@ namespace DataLayer.DTO
     {
         public string Name { get; set; }
 
-        [ForeignKey("Artist")]
         public int ArtistID { get; set; }
 
         public Artist Artist { get; set; }
