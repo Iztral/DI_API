@@ -14,7 +14,7 @@ namespace DataLayer.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<Track>> GetAll()
+        public async Task<List<Track>> GetAll()
         {
             return await _dbContext.Tracks.ToListAsync();
         }

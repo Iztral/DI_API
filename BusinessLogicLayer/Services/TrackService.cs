@@ -34,13 +34,13 @@ namespace BusinessLogicLayer
             return _mapper.Map<TrackEntity>(track);
         }
 
-        public IEnumerable<TrackEntity> GetAll()
+        public List<TrackEntity> GetAll()
         {
             var trackList = _trackRepository.GetAll().Result;
 
             _logger.LogInformation("Found {amount} tracks", trackList.Count());
 
-            return _mapper.Map<IEnumerable<TrackEntity>>(trackList);
+            return _mapper.Map<List<TrackEntity>>(trackList);
         }
 
         public bool Add(TrackEntity newTrack)

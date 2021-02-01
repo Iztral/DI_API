@@ -6,7 +6,7 @@ namespace Base.Interfaces
     {
         TEntity GetByID(int ID);
 
-        IEnumerable<TEntity> GetAll();
+        List<TEntity> GetAll();
 
         bool Add(TEntity newRecord);
 

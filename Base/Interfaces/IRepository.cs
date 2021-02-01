@@ -7,7 +7,7 @@ namespace Base.Interfaces
     {
         Task<TEntity> GetByID(int ID);
 
-        Task<IEnumerable<TEntity>> GetAll();
+        Task<List<TEntity>> GetAll();
 
         Task<bool> Add(TEntity newRecord);
 

@@ -1,10 +1,12 @@
 using AutoMapper;
 using Base.BusinessModels;
 using BusinessLogicLayer;
+using BusinessLogicLayer.MapProfiles;
 using DataLayer;
 using DataLayer.DTO;
 using Microsoft.Extensions.Logging;
 using Moq;
+using System.Collections.Generic;
 using Xunit;
 
 namespace XUnitTest_ServiceLayer
@@ -12,16 +14,20 @@ namespace XUnitTest_ServiceLayer
     public class TrackServiceTests
     {
         private readonly TrackService _trackService;
-        private readonly Mock<ITrackRepository> _trackRepoMock = new Mock<ITrackRepository>();
+        private readonly Mock<ITrackRepository> _trackMockRepo;
         private readonly Mock<ILogger<TrackEntity>> _logger;
-        private readonly Mock<IMapper> _mapper;
 
 
         public TrackServiceTests()
         {
+            _trackMockRepo = new Mock<ITrackRepository>();
             _logger = new Mock<ILogger<TrackEntity>>();
-            _mapper = new Mock<IMapper>();
-            _trackService = new TrackService(_trackRepoMock.Object, _mapper.Object, _logger.Object);
+            var myProfile = new TrackProfile();
+            var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
+            var mapper = new Mapper(configuration);
+
+
+            _trackService = new TrackService(_trackMockRepo.Object, mapper, _logger.Object);
         }
 
         [Fact]
@@ -37,10 +43,10 @@ namespace XUnitTest_ServiceLayer
                 Name = trackName,
                 ArtistID = artistID
             };
-            _trackRepoMock.Setup(x => x.GetByID(trackID)).ReturnsAsync(trackDTO);
+            _trackMockRepo.Setup(x => x.GetByID(trackID)).ReturnsAsync(trackDTO);
 
             // Act
-            var track = _trackService.GetByID(trackID);
+            TrackEntity track = _trackService.GetByID(trackID);
 
             // Assert
             Assert.Equal(trackID, track.ID);
@@ -52,13 +58,30 @@ namespace XUnitTest_ServiceLayer
         {
             // Arrange
             int trackID = 1;
-            _trackRepoMock.Setup(x => x.GetByID(trackID)).ReturnsAsync(() => null);
+            _trackMockRepo.Setup(x => x.GetByID(trackID)).Returns(() => null);
 
             // Act
             var track = _trackService.GetByID(trackID);
 
             // Assert
             Assert.Null(track);
+        }
+
+        [Fact]
+        public void GetAll_ReturnsTracks_WhenTheyExist()
+        {
+            // Arrange
+            _trackMockRepo.Setup(x => x.GetAll())
+                .ReturnsAsync(new List<Track>()
+                {
+                    new Track(), new Track()
+                });
+
+            // Act
+            var tracks = _trackService.GetAll();
+
+            // Assert
+            Assert.Equal(2,tracks.Count);
         }
     }
 }
